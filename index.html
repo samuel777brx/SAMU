@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Game Header -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="display-4 fw-bold text-primary">
+                    <i class="fas fa-calculator me-2"></i>
+                    Desafio Matemático
+                </h1>
+                <p class="lead text-muted">Do 6º ao 9º Ano - Aventura Educativa com Cronômetro</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Welcome Message -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="alert alert-primary border-0 text-center">
+                <i class="fas fa-rocket fa-3x mb-3"></i>
+                <h3 class="alert-heading">Bem-vindo ao Desafio Matemático!</h3>
+                <p class="mb-3">Teste seus conhecimentos em matemática com cronômetro e sistema de recordes.</p>
+                <hr>
+                <p class="mb-0">
+                    <strong>Novidades:</strong> 4 anos escolares, 5 níveis de dificuldade, cronômetro em tempo real e ranking de recordes!
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Features -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-lg-10">
+            <div class="row g-4">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">4 Anos Escolares</h5>
+                            <p class="card-text">Do 6º ao 9º ano, cada um com dificuldade progressiva</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clock fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Cronômetro</h5>
+                            <p class="card-text">Tempo real para cada pergunta e tempo total do jogo</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-warning">
+                        <div class="card-body text-center">
+                            <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">Recordes</h5>
+                            <p class="card-text">Sistema de ranking com melhores tempos e pontuações</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-info">
+                        <div class="card-body text-center">
+                            <i class="fas fa-brain fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">5 Níveis</h5>
+                            <p class="card-text">Soma, multiplicação, frações, potências e equações</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('select_grade') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-play me-2"></i>
+                Começar Jogo
+            </a>
+            <a href="{{ url_for('records') }}" class="btn btn-outline-warning btn-lg">
+                <i class="fas fa-trophy me-2"></i>
+                Ver Recordes
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Result Modal -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100 text-center fs-3" id="resultModalLabel">
+                    <span id="result-emoji"></span>
+                </h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="fs-4 fw-bold mb-3" id="result-message"></p>
+                <p class="text-muted" id="result-score"></p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary px-4" id="continue-btn">
+                    <i class="fas fa-arrow-right me-2"></i>
+                    Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Game Complete Modal -->
+<div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100 text-center fs-2" id="completeModalLabel">
+                    🌟 Parabéns! 🌟
+                </h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="fs-4 fw-bold mb-3">Você completou todos os desafios!</p>
+                <p class="text-muted">Você dominou todos os três mundos matemáticos!</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-success px-4" id="restart-game-btn">
+                    <i class="fas fa-redo me-2"></i>
+                    Jogar Novamente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

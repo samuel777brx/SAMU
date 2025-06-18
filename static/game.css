@@ -1,0 +1,153 @@
+/* Custom styles for the math game */
+
+:root {
+    --game-primary: 220 100% 50%; /* #0080FF */
+    --game-success: 120 100% 40%; /* #00CC00 */
+    --game-warning: 45 100% 50%; /* #FFB000 */
+    --game-danger: 0 100% 60%; /* #FF3333 */
+}
+
+/* Body and layout improvements */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bs-dark) 0%, var(--bs-secondary) 100%);
+}
+
+/* Card enhancements */
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Question display styling */
+#question-text {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+}
+
+/* Answer input enhancements */
+#answer-input {
+    border: 2px solid var(--bs-border-color);
+    transition: all 0.3s ease;
+}
+
+#answer-input:focus {
+    border-color: hsl(var(--game-primary));
+    box-shadow: 0 0 0 0.25rem hsla(var(--game-primary), 0.25);
+}
+
+/* Progress bar styling */
+.progress {
+    background-color: var(--bs-secondary-bg);
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Button enhancements */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Modal enhancements */
+.modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Emoji styling */
+#result-emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    #question-text {
+        font-size: 1.5rem !important;
+        min-height: 60px;
+    }
+    
+    .input-group-lg .form-control {
+        font-size: 1.25rem;
+    }
+    
+    #result-emoji {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    #question-text {
+        font-size: 1.25rem !important;
+        padding: 1rem;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+    }
+}
+
+/* Loading animation */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Success/error feedback */
+.feedback-correct {
+    background-color: hsla(var(--game-success), 0.1) !important;
+    border-color: hsl(var(--game-success)) !important;
+}
+
+.feedback-incorrect {
+    background-color: hsla(var(--game-danger), 0.1) !important;
+    border-color: hsl(var(--game-danger)) !important;
+}
+
+/* Level transition animation */
+.level-transition {
+    animation: levelUp 0.6s ease-in-out;
+}
+
+@keyframes levelUp {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Score animation */
+.score-update {
+    animation: scoreGlow 0.5s ease-in-out;
+}
+
+@keyframes scoreGlow {
+    0% { text-shadow: none; }
+    50% { text-shadow: 0 0 10px hsl(var(--game-success)); }
+    100% { text-shadow: none; }
+}

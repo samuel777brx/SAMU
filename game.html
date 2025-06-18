@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Game Header with Timer -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold text-primary">
+                    <i class="fas fa-calculator me-2"></i>
+                    Desafio Matemático
+                </h1>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-secondary fs-6" id="grade-display">Carregando...</span>
+                    <div class="timer-display">
+                        <i class="fas fa-clock text-warning"></i>
+                        <span id="timer-display" class="fw-bold">00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Level Display -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h3 class="card-title mb-2" id="level-display">
+                        <i class="fas fa-globe me-2"></i>
+                        <span id="level-name">Carregando...</span>
+                    </h3>
+                    <div class="progress mb-2" style="height: 12px;">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                             role="progressbar" id="score-progress" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted">
+                        Pontuação: <span id="current-score">0</span>/<span id="score-needed">5</span>
+                        <span class="ms-3">
+                            <i class="fas fa-stopwatch"></i>
+                            Pergunta: <span id="question-timer">0s</span>
+                        </span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mascot/Guide -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="alert alert-info border-0 text-center">
+                <i class="fas fa-robot fa-2x mb-2"></i>
+                <p class="mb-0 fw-bold">
+                    Eu sou o Professor, seu guia matemático! Vamos jogar! 🤖
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Question Display -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card border-warning question-card">
+                <div class="card-body text-center py-5">
+                    <h2 class="card-text fs-1 fw-bold text-warning" id="question-text">
+                        Carregando pergunta...
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Answer Input -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="input-group input-group-lg">
+                <input type="text" class="form-control text-center fs-3" 
+                       id="answer-input" placeholder="Digite sua resposta..." 
+                       autocomplete="off">
+                <button class="btn btn-success px-4" type="button" id="submit-btn">
+                    <i class="fas fa-check me-2"></i>
+                    Responder
+                </button>
+            </div>
+            <div class="form-text text-center mt-2">
+                Pressione Enter ou clique em Responder
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-12 col-md-8 col-lg-6 text-center">
+            <button class="btn btn-outline-secondary me-2" id="new-game-btn">
+                <i class="fas fa-redo me-2"></i>
+                Novo Jogo
+            </button>
+            <a href="{{ url_for('records') }}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-trophy me-2"></i>
+                Recordes
+            </a>
+            <a href="{{ url_for('select_grade') }}" class="btn btn-outline-warning">
+                <i class="fas fa-graduation-cap me-2"></i>
+                Trocar Ano
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Result Modal -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100 text-center fs-3" id="resultModalLabel">
+                    <span id="result-emoji"></span>
+                </h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="fs-4 fw-bold mb-3" id="result-message"></p>
+                <p class="text-muted" id="result-score"></p>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <small class="text-muted">Tempo da pergunta</small>
+                        <div class="fw-bold" id="question-time-result">0s</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Tempo total</small>
+                        <div class="fw-bold" id="total-time-result">00:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary px-4" id="continue-btn">
+                    <i class="fas fa-arrow-right me-2"></i>
+                    Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Game Complete Modal -->
+<div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100 text-center fs-2" id="completeModalLabel">
+                    🏆 Parabéns! 🏆
+                </h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="fs-4 fw-bold mb-3">Você completou todos os desafios!</p>
+                <p class="text-muted mb-4">Você dominou todos os níveis matemáticos!</p>
+                
+                <!-- Final Statistics -->
+                <div class="row text-center mb-4">
+                    <div class="col-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Tempo Total</h5>
+                                <p class="card-text fs-4 fw-bold" id="final-time">00:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title text-success">Perguntas</h5>
+                                <p class="card-text fs-4 fw-bold" id="final-questions">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title text-warning">Precisão</h5>
+                                <p class="card-text fs-4 fw-bold" id="final-accuracy">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-success">
+                    <i class="fas fa-trophy me-2"></i>
+                    Seu recorde foi salvo! Confira o ranking de recordes.
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <a href="{{ url_for('records') }}" class="btn btn-success px-4 me-2">
+                    <i class="fas fa-trophy me-2"></i>
+                    Ver Recordes
+                </a>
+                <button type="button" class="btn btn-primary px-4" id="restart-game-btn">
+                    <i class="fas fa-redo me-2"></i>
+                    Jogar Novamente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced Math Game with Timer and Grade Support
+class MathGameEnhanced {
+    constructor() {
+        this.currentGameState = null;
+        this.isSubmitting = false;
+        this.gameTimer = 0;
+        this.questionTimer = 0;
+        this.gameTimerInterval = null;
+        this.questionTimerInterval = null;
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.loadGameState();
+        this.startTimers();
+    }
+
+    bindEvents() {
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            this.submitAnswer();
+        });
+
+        document.getElementById('answer-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.submitAnswer();
+            }
+        });
+
+        document.getElementById('new-game-btn').addEventListener('click', () => {
+            this.startNewGame();
+        });
+
+        document.getElementById('continue-btn').addEventListener('click', () => {
+            this.hideResultModal();
+        });
+
+        document.getElementById('restart-game-btn').addEventListener('click', () => {
+            this.startNewGame();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('answer-input').focus();
+        });
+    }
+
+    startTimers() {
+        this.gameTimerInterval = setInterval(() => {
+            this.gameTimer++;
+            document.getElementById('timer-display').textContent = this.formatTime(this.gameTimer);
+        }, 1000);
+
+        this.questionTimerInterval = setInterval(() => {
+            this.questionTimer++;
+            document.getElementById('question-timer').textContent = this.questionTimer + 's';
+        }, 1000);
+    }
+
+    resetQuestionTimer() {
+        this.questionTimer = 0;
+        document.getElementById('question-timer').textContent = '0s';
+    }
+
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    async loadGameState() {
+        try {
+            const response = await fetch('/get_game_state');
+            const data = await response.json();
+            this.currentGameState = data;
+            this.updateUI();
+        } catch (error) {
+            console.error('Error loading game state:', error);
+            this.showError('Erro ao carregar o jogo. Recarregue a página.');
+        }
+    }
+
+    updateUI() {
+        if (!this.currentGameState) return;
+
+        const { level, level_name, score, question, score_to_advance, grade_name } = this.currentGameState;
+
+        // Update displays
+        document.getElementById('grade-display').textContent = grade_name;
+        document.getElementById('level-name').textContent = level_name;
+        document.getElementById('current-score').textContent = score;
+        document.getElementById('score-needed').textContent = score_to_advance;
+        
+        const progressPercent = (score / score_to_advance) * 100;
+        document.getElementById('score-progress').style.width = `${progressPercent}%`;
+        
+        document.getElementById('question-text').textContent = question;
+        
+        const answerInput = document.getElementById('answer-input');
+        answerInput.value = '';
+        answerInput.focus();
+        
+        answerInput.classList.remove('feedback-correct', 'feedback-incorrect');
+        
+        this.resetQuestionTimer();
+    }
+
+    async submitAnswer() {
+        if (this.isSubmitting) return;
+
+        const answerInput = document.getElementById('answer-input');
+        const answer = answerInput.value.trim();
+
+        if (!answer) {
+            this.showError('Por favor, digite uma resposta!');
+            answerInput.focus();
+            return;
+        }
+
+        this.isSubmitting = true;
+        this.setLoading(true);
+
+        try {
+            const response = await fetch('/submit_answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ answer: answer })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                this.showError(result.message);
+                answerInput.focus();
+                return;
+            }
+
+            this.currentGameState = {
+                level: result.level,
+                level_name: result.level_name,
+                score: result.score,
+                question: result.next_question,
+                score_to_advance: result.score_to_advance
+            };
+
+            this.showFeedback(result);
+
+            if (result.game_complete) {
+                setTimeout(() => {
+                    this.showGameComplete(result);
+                }, 1500);
+            } else if (result.should_advance) {
+                setTimeout(() => {
+                    this.showLevelAdvancement(result);
+                }, 1500);
+            }
+
+        } catch (error) {
+            console.error('Error submitting answer:', error);
+            this.showError('Erro ao enviar resposta. Tente novamente.');
+        } finally {
+            this.isSubmitting = false;
+            this.setLoading(false);
+        }
+    }
+
+    showFeedback(result) {
+        const answerInput = document.getElementById('answer-input');
+        
+        if (result.is_correct) {
+            answerInput.classList.add('feedback-correct');
+            this.animateScore();
+        } else {
+            answerInput.classList.add('feedback-incorrect');
+        }
+
+        // Update modal with timing information
+        document.getElementById('result-emoji').textContent = result.emoji;
+        document.getElementById('result-message').textContent = result.message;
+        document.getElementById('result-score').textContent = 
+            `Pontuação: ${result.score}/${result.score_to_advance}`;
+        document.getElementById('question-time-result').textContent = result.time_taken + 's';
+        document.getElementById('total-time-result').textContent = this.formatTime(result.elapsed_time);
+
+        this.showResultModal();
+    }
+
+    showLevelAdvancement(result) {
+        document.getElementById('result-emoji').textContent = result.emoji;
+        document.getElementById('result-message').textContent = result.message;
+        document.getElementById('result-score').textContent = 
+            `Novo nível desbloqueado: ${result.level_name}!`;
+
+        this.showResultModal();
+    }
+
+    showGameComplete(result) {
+        // Update final statistics
+        document.getElementById('final-time').textContent = this.formatTime(result.elapsed_time);
+        document.getElementById('final-questions').textContent = result.total_questions || 0;
+        
+        const completeModal = new bootstrap.Modal(document.getElementById('completeModal'));
+        completeModal.show();
+        
+        // Stop timers
+        clearInterval(this.gameTimerInterval);
+        clearInterval(this.questionTimerInterval);
+    }
+
+    showResultModal() {
+        const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+        resultModal.show();
+    }
+
+    hideResultModal() {
+        const resultModal = bootstrap.Modal.getInstance(document.getElementById('resultModal'));
+        if (resultModal) {
+            resultModal.hide();
+        }
+        
+        setTimeout(() => {
+            this.updateUI();
+        }, 300);
+    }
+
+    animateScore() {
+        const scoreElement = document.getElementById('current-score');
+        scoreElement.classList.add('score-update');
+        setTimeout(() => {
+            scoreElement.classList.remove('score-update');
+        }, 500);
+    }
+
+    setLoading(isLoading) {
+        const submitBtn = document.getElementById('submit-btn');
+        const answerInput = document.getElementById('answer-input');
+        
+        if (isLoading) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
+            answerInput.disabled = true;
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Responder';
+            answerInput.disabled = false;
+        }
+    }
+
+    showError(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px;';
+        alertDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+
+    async startNewGame() {
+        try {
+            const modals = ['resultModal', 'completeModal'];
+            modals.forEach(modalId => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                if (modal) {
+                    modal.hide();
+                }
+            });
+
+            window.location.href = '/new_game';
+        } catch (error) {
+            console.error('Error starting new game:', error);
+            this.showError('Erro ao iniciar novo jogo. Recarregue a página.');
+        }
+    }
+}
+
+// Initialize the enhanced game
+document.addEventListener('DOMContentLoaded', () => {
+    new MathGameEnhanced();
+});
+</script>
+
+<style>
+.timer-display {
+    font-size: 1.2rem;
+    color: #ffc107;
+}
+
+.question-card {
+    transition: all 0.3s ease;
+    min-height: 150px;
+}
+
+.question-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.progress-bar-animated {
+    animation: progress-bar-stripes 0.6s linear infinite;
+}
+
+.feedback-correct {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-color: #198754 !important;
+    animation: pulse-success 0.6s ease-in-out;
+}
+
+.feedback-incorrect {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border-color: #dc3545 !important;
+    animation: shake 0.6s ease-in-out;
+}
+
+@keyframes pulse-success {
+    0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.score-update {
+    animation: scoreGlow 0.5s ease-in-out;
+}
+
+@keyframes scoreGlow {
+    0% { text-shadow: none; }
+    50% { text-shadow: 0 0 10px #198754; }
+    100% { text-shadow: none; }
+}
+</style>
+{% endblock %}

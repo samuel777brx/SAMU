@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-12">
+            <div class="text-center mb-4">
+                <h1 class="display-4 fw-bold text-warning">
+                    <i class="fas fa-trophy me-2"></i>
+                    Ranking de Recordes
+                </h1>
+                <p class="lead text-muted">Os melhores tempos e pontuações por ano escolar</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Records by Grade -->
+    <div class="row">
+        {% for grade in [6, 7, 8, 9] %}
+        <div class="col-12 col-lg-6 mb-4">
+            <div class="card h-100 border-{{ ['primary', 'info', 'warning', 'danger'][grade-6] }}">
+                <div class="card-header bg-{{ ['primary', 'info', 'warning', 'danger'][grade-6] }} text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-medal me-2"></i>
+                        {{ grade }}º Ano
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% set grade_records = records_by_grade.get(grade, []) %}
+                    {% if grade_records %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th width="10%">#</th>
+                                        <th width="30%">Nome</th>
+                                        <th width="20%">Pontos</th>
+                                        <th width="20%">Tempo</th>
+                                        <th width="20%">Precisão</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in grade_records %}
+                                    <tr class="{% if loop.index == 1 %}table-warning{% elif loop.index <= 3 %}table-light{% endif %}">
+                                        <td>
+                                            {% if loop.index == 1 %}
+                                                <i class="fas fa-crown text-warning"></i>
+                                            {% elif loop.index == 2 %}
+                                                <i class="fas fa-medal text-secondary"></i>
+                                            {% elif loop.index == 3 %}
+                                                <i class="fas fa-medal text-dark"></i>
+                                            {% else %}
+                                                {{ loop.index }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="fw-bold">{{ record.player_name }}</td>
+                                        <td>
+                                            <span class="badge bg-success">{{ record.score }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-primary">
+                                                {% set minutes = record.time_spent // 60 %}
+                                                {% set seconds = record.time_spent % 60 %}
+                                                {{ "%02d:%02d"|format(minutes, seconds) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">{{ "%.1f"|format(record.accuracy) }}%</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-clipboard-list fa-3x mb-3 opacity-50"></i>
+                            <p>Nenhum recorde ainda.<br>Seja o primeiro!</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>
+                        <i class="fas fa-info-circle me-1"></i>
+                        Níveis: {{ [3, 4, 5, 5][grade-6] }} | Acertos necessários: {{ [5, 6, 7, 8][grade-6] }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Statistics Summary -->
+    {% set total_players = [] %}
+    {% for grade_records in records_by_grade.values() %}
+        {% set _ = total_players.extend(grade_records) %}
+    {% endfor %}
+    
+    {% if total_players %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-lg-8">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Estatísticas Gerais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 col-md-3">
+                            <div class="border-end">
+                                <h4 class="text-primary">{{ total_players|length }}</h4>
+                                <small class="text-muted">Total de Recordes</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="border-end">
+                                {% set best_time = total_players|map(attribute='time_spent')|min %}
+                                {% set minutes = best_time // 60 %}
+                                {% set seconds = best_time % 60 %}
+                                <h4 class="text-success">{{ "%02d:%02d"|format(minutes, seconds) }}</h4>
+                                <small class="text-muted">Melhor Tempo</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="border-end">
+                                <h4 class="text-warning">{{ total_players|map(attribute='score')|max }}</h4>
+                                <small class="text-muted">Maior Pontuação</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <h4 class="text-info">{{ "%.1f"|format(total_players|map(attribute='accuracy')|max) }}%</h4>
+                            <small class="text-muted">Melhor Precisão</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Action Buttons -->
+    <div class="row justify-content-center mt-4 mb-5">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('select_grade') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-play me-2"></i>
+                Jogar Agora
+            </a>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-home me-2"></i>
+                Início
+            </a>
+        </div>
+    </div>
+    
+    <!-- Instructions -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="alert alert-info border-0">
+                <h6 class="alert-heading">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Como estabelecer um recorde:
+                </h6>
+                <ul class="mb-0">
+                    <li><strong>Complete todos os níveis</strong> do seu ano escolar</li>
+                    <li><strong>Seja rápido:</strong> o tempo total conta para o ranking</li>
+                    <li><strong>Seja preciso:</strong> acertos consecutivos melhoram sua posição</li>
+                    <li><strong>Digite seu nome</strong> antes de começar para aparecer no ranking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table th {
+    border-top: none;
+    font-weight: 600;
+    background-color: rgba(0,0,0,0.05);
+}
+
+.table-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+}
+
+.border-end {
+    border-right: 1px solid rgba(0,0,0,0.1) !important;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .border-end {
+        border-right: none !important;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .border-end:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+}
+</style>
+{% endblock %}

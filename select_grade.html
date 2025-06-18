@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Game Header -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="display-4 fw-bold text-primary">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    Selecione Seu Ano Escolar
+                </h1>
+                <p class="lead text-muted">Escolha seu nível para começar os desafios matemáticos</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Grade Selection Cards -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-lg-10">
+            <div class="row g-4">
+                <!-- 6º Ano -->
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-primary grade-card" data-grade="6">
+                        <div class="card-body text-center">
+                            <div class="display-1 text-primary mb-3">6º</div>
+                            <h5 class="card-title">6º Ano</h5>
+                            <p class="card-text">
+                                <strong>Níveis:</strong> 3<br>
+                                <small class="text-muted">Soma, Multiplicação, Frações</small>
+                            </p>
+                            <p class="text-success">
+                                <i class="fas fa-star"></i> 5 acertos para avançar
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 7º Ano -->
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-info grade-card" data-grade="7">
+                        <div class="card-body text-center">
+                            <div class="display-1 text-info mb-3">7º</div>
+                            <h5 class="card-title">7º Ano</h5>
+                            <p class="card-text">
+                                <strong>Níveis:</strong> 4<br>
+                                <small class="text-muted">+ Reino das Potências</small>
+                            </p>
+                            <p class="text-warning">
+                                <i class="fas fa-star"></i> 6 acertos para avançar
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 8º Ano -->
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-warning grade-card" data-grade="8">
+                        <div class="card-body text-center">
+                            <div class="display-1 text-warning mb-3">8º</div>
+                            <h5 class="card-title">8º Ano</h5>
+                            <p class="card-text">
+                                <strong>Níveis:</strong> 5<br>
+                                <small class="text-muted">+ Universo das Equações</small>
+                            </p>
+                            <p class="text-danger">
+                                <i class="fas fa-star"></i> 7 acertos para avançar
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 9º Ano -->
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-danger grade-card" data-grade="9">
+                        <div class="card-body text-center">
+                            <div class="display-1 text-danger mb-3">9º</div>
+                            <h5 class="card-title">9º Ano</h5>
+                            <p class="card-text">
+                                <strong>Níveis:</strong> 5<br>
+                                <small class="text-muted">Desafio máximo!</small>
+                            </p>
+                            <p class="text-dark">
+                                <i class="fas fa-star"></i> 8 acertos para avançar
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Player Name Input -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title text-center mb-3">
+                        <i class="fas fa-user me-2"></i>
+                        Nome do Jogador
+                    </h5>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="player-name" 
+                               placeholder="Digite seu nome para os recordes" maxlength="20">
+                        <span class="input-group-text">
+                            <i class="fas fa-trophy"></i>
+                        </span>
+                    </div>
+                    <small class="text-muted">Opcional - para aparecer no ranking de recordes</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6 text-center">
+            <button class="btn btn-success btn-lg me-3" id="start-game-btn" disabled>
+                <i class="fas fa-play me-2"></i>
+                Começar Jogo
+            </button>
+            <a href="{{ url_for('records') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-trophy me-2"></i>
+                Ver Recordes
+            </a>
+        </div>
+    </div>
+    
+    <!-- Instructions -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="alert alert-info border-0">
+                <h6 class="alert-heading">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Como funciona:
+                </h6>
+                <ul class="mb-0">
+                    <li>Cada ano escolar tem níveis e dificuldades diferentes</li>
+                    <li>O cronômetro acompanha seu tempo de jogo</li>
+                    <li>Complete todos os níveis para estabelecer um recorde</li>
+                    <li>Quanto mais rápido e com mais acertos, melhor sua pontuação</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let selectedGrade = null;
+    const gradeCards = document.querySelectorAll('.grade-card');
+    const startButton = document.getElementById('start-game-btn');
+    const playerNameInput = document.getElementById('player-name');
+    
+    // Grade selection
+    gradeCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove previous selection
+            gradeCards.forEach(c => c.classList.remove('border-3', 'border-success'));
+            
+            // Add selection style
+            this.classList.add('border-3', 'border-success');
+            
+            // Store selected grade
+            selectedGrade = parseInt(this.dataset.grade);
+            
+            // Enable start button
+            startButton.disabled = false;
+        });
+        
+        // Hover effects
+        card.style.cursor = 'pointer';
+        card.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('border-success')) {
+                this.style.transform = 'translateY(-5px)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Start game
+    startButton.addEventListener('click', function() {
+        if (selectedGrade) {
+            // Save player name if provided
+            const playerName = playerNameInput.value.trim();
+            if (playerName) {
+                fetch('/save_player_name', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: playerName })
+                });
+            }
+            
+            // Start game with selected grade
+            window.location.href = `/start-game/${selectedGrade}`;
+        }
+    });
+    
+    // Enter key to start game
+    playerNameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && selectedGrade) {
+            startButton.click();
+        }
+    });
+});
+</script>
+
+<style>
+.grade-card {
+    transition: all 0.3s ease;
+}
+
+.grade-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}
